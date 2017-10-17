@@ -7,6 +7,9 @@ sys.setdefaultencoding('utf8')
 MODELDIR = 'C:\ltp-data-v3.3.1\ltp_data'
 FILE_IN = 'data/in/rmdmy.txt'
 FILE_OUT = 'data/out/rmdmy.out'
+FILE_DIALOG = 'data/out/rmdmy.dialog'
+FILE_PRE = 'data/out/rmdmy.pre'
+
 from pyltp import *
 
 # 话语开始标志
@@ -83,13 +86,24 @@ def extracter(file, names):
     print '抽取人物对话成功'
     return lan
 
-def storeResultMap(resMap, file):
+def storeResultMap(resMap):
     print '正在存储文件...'
-    with open(file, 'w') as fout:
-        for key in resMap:
-            fout.write('\n%s:%i\n' % (key, len(resMap[key])))
-            for sen in resMap[key]:
-                fout.write('%s\n'%sen)
+    file_out = open(FILE_OUT, 'w')
+    file_dialog = open(FILE_DIALOG, 'w')
+    file_pre = open(FILE_PRE, 'w')
+
+    for key in resMap:
+        file_out.write('\n%s:%i\n' % (key, len(resMap[key])))
+        file_dialog.write('\n%s:%i\n' % (key, len(resMap[key])))
+        file_pre.write('\n%s:%i\n' % (key, len(resMap[key])))
+        for sen in resMap[key]:
+            file_out.write('%s\n'%sen)
+            file_dialog.write('%s\n' % sen.split(DIALOG_FLAG)[1])
+            file_pre.write('%s\n' % sen.split(DIALOG_FLAG)[0])
+
+    file_out.close()
+    file_dialog.close()
+    file_pre.close()
     print '存储文件成功'
 
 
@@ -101,4 +115,4 @@ def showResultMap(resMap):
 
 if __name__ == '__main__':
     resMap = extracter(FILE_IN, ['侯亮平', '钟小艾', '祁同伟', '李达康', '沙瑞金', '陈海','陈岩石', '易学习', '赵德汉', '高小琴', '陆亦可', '赵东来'])
-    storeResultMap(resMap, FILE_OUT)
+    storeResultMap(resMap)
